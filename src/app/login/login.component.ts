@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { url } from 'inspector';
 
 @Component({
   selector: 'app-login',
@@ -19,11 +20,30 @@ export class LoginComponent {
     });
   }
 
-  ngOnInit() { }
+  ngOnInit() { 
+    var url = 'pedago.univ-avignon.fr:3221';
+  }
+
+  sendFormInformationToServer() {
+
+    fetch('https://pedago.univ-avignon.fr:3221/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(this.loginForm.value),
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log('Success:', data);
+    })
+  }
+
 
   login() {
     if (this.loginForm.valid) {
-      console.log('Formulaire soumis avec succès', this.loginForm.value);
+      console.log('Formulaire valide');
+      this.sendFormInformationToServer();
     } else {
       console.log('Formulaire invalide');
     }
