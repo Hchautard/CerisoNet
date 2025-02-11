@@ -21,7 +21,6 @@ export class LoginComponent {
   }
 
   ngOnInit() { 
-    var url = 'pedago.univ-avignon.fr:3221';
   }
 
   sendFormInformationToServer() {
@@ -42,10 +41,9 @@ export class LoginComponent {
 
   login() {
     if (this.loginForm.valid) {
-      console.log('Formulaire valide');
       this.sendFormInformationToServer();
     } else {
-      console.log('Formulaire invalide');
+      alert('Formulaire invalide');
     }
   }
 }
