@@ -50,8 +50,7 @@ export class LoginComponent implements OnInit {
         next: (response) => {
           this.loading = false;
           if (response.success) {
-            this.notificationService.success('Connexion réussie');
-            // La redirection vers le mur est gérée dans le service d'authentification
+            this.notificationService.success('Connexion réussie, date de la dernière connexion: ' + this.lastLogin);
           } else {
             this.notificationService.error(response.message || 'Erreur lors de la connexion');
           }
@@ -59,12 +58,11 @@ export class LoginComponent implements OnInit {
         error: (error) => {
           this.loading = false;
           this.notificationService.error(
-            error.error?.message || 'Erreur de connexion au serveur'
+            error.error?.message || 'Erreur de connexion au serveur (HTTP ' + error.status + ')'
           );
         }
       });
     } else {
-      // Marquer tous les champs comme touchés pour afficher les erreurs
       Object.keys(this.loginForm.controls).forEach(key => {
         const control = this.loginForm.get(key);
         control?.markAsTouched();
