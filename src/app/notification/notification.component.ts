@@ -22,7 +22,8 @@ import { CommonModule } from '@angular/common';
     .notification-container {
       position: fixed;
       top: 20px;
-      right: 20px;
+      right: 50%;
+      transform: translateX(50%);
       padding: 15px;
       border-radius: 5px;
       max-width: 500px;
