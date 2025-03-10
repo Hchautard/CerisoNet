@@ -36,11 +36,10 @@ export class AuthService {
       .pipe(
         tap(response => {
           if (response.success && response.user) {
+            
             // Stocker les informations de la dernière connexion
             this.saveLastLogin(response.user.lastLogin);
-            // Mettre à jour l'utilisateur courant
             this.userSubject.next(response.user);
-            // Rediriger vers le mur d'accueil
             this.router.navigate(['/home']);
           }
         })
@@ -51,9 +50,8 @@ export class AuthService {
     return this.http.post(`${this.apiUrl}/logout`, {}, { withCredentials: true })
       .pipe(
         tap(() => {
-          // Réinitialiser l'utilisateur courant
+          // Réinitialiser l'utilisateur
           this.userSubject.next(null);
-          // Rediriger vers la page de connexion
           this.router.navigate(['/login']);
         })
       );

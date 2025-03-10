@@ -12,7 +12,7 @@ export interface Notification {
 })
 export class NotificationService {
   private notificationSubject = new BehaviorSubject<Notification | null>(null);
-  public notification$ = this.notificationSubject.asObservable();
+  public notification = this.notificationSubject.asObservable();
   private timeoutId: any = null;
 
   constructor() {}
@@ -31,15 +31,12 @@ export class NotificationService {
       timestamp: new Date()
     };
 
-    // Afficher la notification
     this.notificationSubject.next(notification);
 
-    // Nettoyer tout timeout existant
     if (this.timeoutId) {
       clearTimeout(this.timeoutId);
     }
 
-    // Fermer automatiquement la notification après la durée spécifiée
     this.timeoutId = setTimeout(() => {
       this.clearNotification();
     }, duration);

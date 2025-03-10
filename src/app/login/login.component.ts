@@ -52,7 +52,7 @@ export class LoginComponent implements OnInit {
           if (response.success) {
             this.notificationService.success('Connexion réussie, date de la dernière connexion: ' + this.lastLogin);
           } else {
-            this.notificationService.error(response.message || 'Erreur lors de la connexion');
+            this.notificationService.error(response.message || 'Erreur lors de la connexion (HTTP ' + response.message + ')');
           }
         },
         error: (error) => {

@@ -25,7 +25,7 @@ import { CommonModule } from '@angular/common';
       right: 20px;
       padding: 15px;
       border-radius: 5px;
-      max-width: 300px;
+      max-width: 500px;
       z-index: 1000;
       transition: all 0.3s ease-in-out;
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
@@ -76,7 +76,7 @@ export class NotificationComponent implements OnInit, OnDestroy {
   constructor(private notificationService: NotificationService) {}
 
   ngOnInit(): void {
-    this.subscription = this.notificationService.notification$.subscribe(
+    this.subscription = this.notificationService.notification.subscribe(
       notification => this.notification = notification
     );
   }
