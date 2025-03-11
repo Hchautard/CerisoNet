@@ -1,12 +1,18 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 
+// Je crée une interface pour définir la structure d'une notification
 export interface Notification {
   message: string;
   type: 'success' | 'error' | 'info';
   timestamp: Date;
 }
 
+
+// Service de notification
+// Gère l'affichage de notifications dans l'application
+// Les notifications sont stockées dans un BehaviorSubject pour être écoutées par les composants
+// Le service est injectable, ce qui permet de l'utiliser dans d'autres services ou composants (dépendance)
 @Injectable({
   providedIn: 'root'
 })
@@ -37,6 +43,7 @@ export class NotificationService {
       clearTimeout(this.timeoutId);
     }
 
+    // Effacer la notification après la duration spécifiée
     this.timeoutId = setTimeout(() => {
       this.clearNotification();
     }, duration);

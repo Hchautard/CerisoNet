@@ -19,12 +19,15 @@ export class LoginComponent implements OnInit {
   lastLogin: string | null = null;
   loading = false;
 
+  // J'utilise 2 services pour gérer la connexion et les notifications
+  // J'utilise également le router pour rediriger l'utilisateur après la connexion
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
     private notificationService: NotificationService,
     private router: Router
   ) {
+    // Ajout de validateurs pour les champs du formulaire
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(3)]]
@@ -46,6 +49,8 @@ export class LoginComponent implements OnInit {
       this.loading = true;
       const { email, password } = this.loginForm.value;
 
+      // Subscribe permet de gérer les réponses de la requête HTTP
+      // Ici, on affiche une notification en cas de succès ou d'erreur
       this.authService.login(email, password).subscribe({
         next: (response) => {
           this.loading = false;

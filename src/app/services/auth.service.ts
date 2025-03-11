@@ -3,6 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
 
+// Je crée une interface pour définir la structure d'un utilisateur
+// Cela me permet de typer les données reçues du backend
 export interface User {
   id: number;
   email: string;
@@ -11,12 +13,17 @@ export interface User {
   lastLogin: string;
 }
 
+// Idem pour la réponse de connexion
 export interface LoginResponse {
   success: boolean;
   message: string;
   user?: User;
 }
 
+// Service d'authentification
+// Gère la connexion et la déconnexion des utilisateurs
+// Stocke l'utilisateur actuel
+// Le service est injectable, ce qui permet de l'utiliser dans d'autres services ou composants (dépendance)
 @Injectable({
   providedIn: 'root'
 })
@@ -31,6 +38,8 @@ export class AuthService {
     this.checkUser();
   }
 
+  // Observable pour être notifié des changements d'utilisateur
+  // Permet de mettre à jour l'interface en temps réel
   login(email: string, password: string): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${this.apiUrl}/login`, { email, password }, { withCredentials: true })
       .pipe(
@@ -46,6 +55,7 @@ export class AuthService {
       );
   }
 
+  // Pipe pour effectuer des actions après la requête HTTP (comme dans un terminal)
   logout(): Observable<any> {
     return this.http.post(`${this.apiUrl}/logout`, {}, { withCredentials: true })
       .pipe(

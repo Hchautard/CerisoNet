@@ -4,6 +4,10 @@ import { Subscription } from 'rxjs';
 import { Notification, NotificationService } from '../services/notification.service';
 import { CommonModule } from '@angular/common';
 
+// Composant de notification
+// Affiche une notification à l'utilisateur
+// Les notifications sont émises par le service de notification
+// Le composant écoute les notifications et les affiche à l'écran
 @Component({
   selector: 'app-notification',
   standalone: true,
