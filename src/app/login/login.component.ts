@@ -56,6 +56,9 @@ export class LoginComponent implements OnInit {
           this.loading = false;
           if (response.success) {
             this.notificationService.success('Connexion réussie, date de la dernière connexion: ' + this.lastLogin);
+            setTimeout(() => {
+              this.router.navigate(['/home']);
+            } , 2000);
           } else {
             this.notificationService.error(response.message || 'Erreur lors de la connexion (HTTP ' + response.message + ')');
           }
