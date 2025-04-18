@@ -22,10 +22,11 @@
     "@angular/router": "^17.3.0",
     "@angular/ssr": "^17.3.11",
     "@tailwindcss/postcss": "^4.0.4",
+    "@types/socket.io-client": "^3.0.0",
     "express": "^4.18.2",
     "postcss": "^8.5.1",
     "rxjs": "~7.8.0",
-    "tailwindcss": "^4.0.4",
+    "socket.io-client": "^4.8.1",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.3"
   },
@@ -42,6 +43,7 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
+    "tailwindcss": "^3.4.17",
     "typescript": "~5.4.2"
   }
 }

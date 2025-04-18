@@ -49,7 +49,7 @@ export class AuthService {
             // Stocker les informations de la dernière connexion
             this.saveLastLogin(response.user.lastLogin);
             this.userSubject.next(response.user);
-            // this.router.navigate(['/home']);
+            this.router.navigate(['/home']);
           }
         })
       );
