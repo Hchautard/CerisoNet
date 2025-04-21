@@ -116,8 +116,10 @@ export class WebSocketService {
 
   /**
    * Envoie un like pour un post
+   * @param postId Identifiant du post (chaîne MongoDB ou nombre)
+   * @param newLikeCount Nouveau nombre de likes
    */
-  likePost(postId: number, newLikeCount: number) {
+  likePost(postId: string | number, newLikeCount: number) {
     const user = this.authService.getCurrentUser();
     if (user) {
       this.socket.emit('like-post', {
@@ -131,8 +133,10 @@ export class WebSocketService {
 
   /**
    * Ajoute un commentaire à un post
+   * @param postId Identifiant du post (chaîne MongoDB ou nombre)
+   * @param content Contenu du commentaire
    */
-  addComment(postId: number, content: string) {
+  addComment(postId: string | number, content: string) {
     const user = this.authService.getCurrentUser();
     if (user) {
       this.socket.emit('add-comment', {
@@ -146,8 +150,9 @@ export class WebSocketService {
 
   /**
    * Partage un post
+   * @param postId Identifiant du post (chaîne MongoDB ou nombre)
    */
-  sharePost(postId: number) {
+  sharePost(postId: string | number) {
     const user = this.authService.getCurrentUser();
     if (user) {
       this.socket.emit('share-post', {

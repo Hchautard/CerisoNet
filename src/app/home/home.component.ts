@@ -135,14 +135,27 @@ export class HomeComponent implements OnInit, OnDestroy {
         next: (response) => {
           this.loading = false;
           if (response.success) {
-            // On assume que le serveur a transformé les posts dans le format attendu
-            this.posts = response.posts.map((post: Post) => ({
-              ...post,
-              commentsList: [],
-              showComments: false
-            }));
-            
-            console.log('Posts récupérés:', this.posts);
+            // Vérifier que les données sont dans le bon format
+            if (response.posts && Array.isArray(response.posts)) {
+              this.posts = response.posts.map((post: any) => {
+                // S'assurer que tous les champs nécessaires sont présents
+                return {
+                  id: post.id || '',
+                  content: post.content || '',
+                  author: post.author || 'Inconnu',
+                  likes: post.likes || 0,
+                  comments: post.comments || 0,
+                  date: post.date || new Date().toISOString(),
+                  hashtags: post.hashtags || [],
+                  commentsList: [],
+                  showComments: false
+                };
+              });
+              console.log('Posts après traitement:', this.posts);
+            } else {
+              console.error('Format de posts incorrect:', response.posts);
+              this.notificationService.error('Format de données incorrect');
+            }
           } else {
             this.notificationService.error('Erreur lors du chargement des posts');
           }
@@ -239,7 +252,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     if (!commentContent || !commentContent.trim()) return;
     
     // Envoi de l'événement via WebSocket
-    this.webSocketService.addComment(Number(post.id), commentContent);
+    this.webSocketService.addComment(Number(post.id), commentContent.trim());
     
     // Réinitialiser le champ de texte
     this.commentText[post.id] = '';
