@@ -9,22 +9,29 @@ import { WebSocketService } from '../services/websocket.service';
 import { Subscription } from 'rxjs';
 
 interface Post {
-  id: number;
-  content: string;
-  author: string;
-  likes: number;
-  comments: number;
-  date: string;
+  id: string;           // MongoDB _id (converti en string)
+  content: string;      // body du message
+  author: string;       // Nom de l'auteur (à partir de createdBy)
+  authorId?: number;    // createdBy (id de l'auteur)
+  likes: number;        // likes
+  comments: number;     // Nombre de commentaires
+  date: string;         // date + heure formatée
+  hashtags?: string[];  // hashtags
+  image?: {             // Image associée au post
+    url: string;
+    title: string;
+  };
+  shared?: string;      // ID du post partagé
   commentsList?: Comment[];
   showComments?: boolean;
 }
 
 interface Comment {
   id: string;
-  postId: number;
+  postId: string;
   userId: number;
   userName: string;
-  content: string;
+  content: string;  // text dans MongoDB
   date: string;
 }
 
@@ -46,7 +53,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   posts: Post[] = [];
   userName = '';
   newPostContent = '';
-  commentText: { [key: number]: string } = {};
+  commentText: { [key: string]: string } = {}; // Changé en string pour les IDs MongoDB
   connectedUsers: ConnectedUser[] = [];
   private apiUrl = 'https://pedago.univ-avignon.fr:3221';
   private subscriptions: Subscription[] = [];
@@ -128,17 +135,21 @@ export class HomeComponent implements OnInit, OnDestroy {
         next: (response) => {
           this.loading = false;
           if (response.success) {
+            // On assume que le serveur a transformé les posts dans le format attendu
             this.posts = response.posts.map((post: Post) => ({
               ...post,
               commentsList: [],
               showComments: false
             }));
+            
+            console.log('Posts récupérés:', this.posts);
           } else {
             this.notificationService.error('Erreur lors du chargement des posts');
           }
         },
         error: (error) => {
           this.loading = false;
+          console.error('Erreur lors du chargement des posts:', error);
           this.notificationService.error(
             error.error?.message || 'Erreur de connexion au serveur'
           );
@@ -152,8 +163,18 @@ export class HomeComponent implements OnInit, OnDestroy {
     const user = this.authService.getCurrentUser();
     if (!user) return;
     
+    // Extraction des hashtags du contenu
+    const hashtags: string[] = [];
+    const hashtagRegex = /#(\w+)/g;
+    let match;
+    const content = this.newPostContent.trim();
+    while ((match = hashtagRegex.exec(content)) !== null) {
+      hashtags.push(match[1]);
+    }
+    
     const newPost = {
-      content: this.newPostContent.trim()
+      content: content,
+      hashtags: hashtags
     };
     
     this.http.post<any>(`${this.apiUrl}/posts`, newPost, { withCredentials: true })
@@ -162,12 +183,14 @@ export class HomeComponent implements OnInit, OnDestroy {
           if (response.success) {
             this.notificationService.success('Publication créée avec succès');
             this.newPostContent = '';
-            // Le nouveau post sera ajouté via WebSocket
+            // Recharger les posts pour inclure le nouveau
+            this.loadPosts();
           } else {
             this.notificationService.error('Erreur lors de la création de la publication');
           }
         },
         error: (error) => {
+          console.error('Erreur lors de la création du post:', error);
           this.notificationService.error(
             error.error?.message || 'Erreur de connexion au serveur'
           );
@@ -180,7 +203,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     post.likes += 1;
     
     // Envoi de l'événement via WebSocket
-    this.webSocketService.likePost(post.id, post.likes);
+    this.webSocketService.likePost(Number(post.id), post.likes);
   }
 
   toggleComments(post: Post) {
@@ -203,6 +226,7 @@ export class HomeComponent implements OnInit, OnDestroy {
           }
         },
         error: (error) => {
+          console.error('Erreur lors du chargement des commentaires:', error);
           this.notificationService.error(
             error.error?.message || 'Erreur de connexion au serveur'
           );
@@ -215,7 +239,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     if (!commentContent || !commentContent.trim()) return;
     
     // Envoi de l'événement via WebSocket
-    this.webSocketService.addComment(post.id, commentContent.trim());
+    this.webSocketService.addComment(Number(post.id), commentContent);
     
     // Réinitialiser le champ de texte
     this.commentText[post.id] = '';
@@ -223,7 +247,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   sharePost(post: Post) {
     // Envoi de l'événement via WebSocket
-    this.webSocketService.sharePost(post.id);
+    this.webSocketService.sharePost(Number(post.id));
     this.notificationService.success('Publication partagée avec succès');
   }
 
