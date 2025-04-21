@@ -17,6 +17,8 @@ export class WebSocketService {
   private postLikedSubject = new Subject<any>();
   private newCommentSubject = new Subject<any>();
   private postSharedSubject = new Subject<any>();
+  private userConnectedSubject = new Subject<any>();
+  private userDisconnectedSubject = new Subject<any>();
   
   // Observables exposés aux composants
   connectedUsers$ = this.connectedUsersSubject.asObservable();
@@ -24,6 +26,8 @@ export class WebSocketService {
   postLiked$ = this.postLikedSubject.asObservable();
   newComment$ = this.newCommentSubject.asObservable();
   postShared$ = this.postSharedSubject.asObservable();
+  userConnected$ = this.userConnectedSubject.asObservable();
+  userDisconnected$ = this.userDisconnectedSubject.asObservable();
 
   constructor(
     private authService: AuthService,
@@ -73,15 +77,25 @@ export class WebSocketService {
     
     // Notification de connexion d'un nouvel utilisateur
     this.socket.on('user-connected', (user: any) => {
-      this.connectedUsers.push(user);
-      this.connectedUsersSubject.next(this.connectedUsers);
+      // Emit le nouvel utilisateur
+      this.userConnectedSubject.next(user);
+      
+      // Mettre à jour la liste des utilisateurs connectés (supposant que vous recevrez une liste complète)
+      this.socket.emit('get-connected-users');
+      
+      // Notification visuelle
       this.notificationService.info(`${user.prenom} ${user.nom} s'est connecté(e)`);
     });
     
     // Notification de déconnexion d'un utilisateur
     this.socket.on('user-disconnected', (user: any) => {
-      this.connectedUsers = this.connectedUsers.filter(u => u.id !== user.id);
-      this.connectedUsersSubject.next(this.connectedUsers);
+      // Emit l'utilisateur déconnecté
+      this.userDisconnectedSubject.next(user);
+      
+      // Mettre à jour la liste des utilisateurs connectés (supposant que vous recevrez une liste complète)
+      this.socket.emit('get-connected-users');
+      
+      // Notification visuelle  
       this.notificationService.info(`${user.prenom} ${user.nom} s'est déconnecté(e)`);
     });
     
@@ -105,6 +119,12 @@ export class WebSocketService {
       this.postSharedSubject.next(data);
       this.notificationService.info(`${data.userName} a partagé une publication`);
     });
+    
+  }
+
+  getConnectedUsers() {
+    if (!this.socket) return;
+    this.socket.emit('get-connected-users');
   }
 
   /**

@@ -66,6 +66,12 @@
                   <div class="text-sm text-gray-500">{{ post.date | date:'dd/MM/yyyy HH:mm' }}</div>
                 </div>
                 <p class="text-gray-900 mb-3">{{ post.content }}</p>
+
+                <!-- hashtags -->
+                <div *ngIf="post.hashtags && post.hashtags.length > 0" class="text-sm text-gray-500 mb-2">
+                  <span *ngFor="let hashtag of post.hashtags" class="bg-indigo-100 text-indigo-800 px-2 py-1 rounded-full mr-2">{{ hashtag }}</span>
+                </div>
+
                 <div class="flex items-center text-sm text-gray-500 space-x-4">
                   <button (click)="likePost(post)" class="flex items-center space-x-1 hover:text-indigo-600">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

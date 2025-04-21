@@ -72,11 +72,14 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.userName = `${user.prenom} ${user.nom}`;
       // Connexion au WebSocket
       this.webSocketService.connect();
+      
+      // Charger les utilisateurs connectés
+      this.loadConnectedUsers();
     } else {
       this.notificationService.error('Vous devez être connecté pour accéder à cette page');
       // Redirection gérée par le service d'auth
     }
-
+  
     // Charger les posts
     this.loadPosts();
     
@@ -92,6 +95,26 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.webSocketService.disconnect();
   }
 
+  loadConnectedUsers() {
+    this.http.get<any>(`${this.apiUrl}/users/connected`, { withCredentials: true })
+      .subscribe({
+        next: (response) => {
+          if (response.success) {
+            // Filtrer pour ne pas inclure l'utilisateur actuel
+            const currentUser = this.authService.getCurrentUser();
+            this.connectedUsers = response.connectedUsers.filter(
+              (user: ConnectedUser) => currentUser && user.id !== currentUser.id
+            );
+          } else {
+            console.error('Erreur lors du chargement des utilisateurs connectés');
+          }
+        },
+        error: (error) => {
+          console.error('Erreur lors du chargement des utilisateurs connectés:', error);
+        }
+      });
+  }
+
   /**
    * Configure les écouteurs d'événements WebSocket
    */
@@ -99,7 +122,28 @@ export class HomeComponent implements OnInit, OnDestroy {
     // Liste des utilisateurs connectés
     this.subscriptions.push(
       this.webSocketService.connectedUsers$.subscribe(users => {
-        this.connectedUsers = users;
+        // Filtrer pour ne pas inclure l'utilisateur actuel
+        const currentUser = this.authService.getCurrentUser();
+        this.connectedUsers = currentUser 
+          ? users.filter(user => user.id !== currentUser.id) 
+          : users;
+      })
+    );
+    
+    // Connexion d'un nouvel utilisateur
+    this.subscriptions.push(
+      this.webSocketService.userConnected$.subscribe(user => {
+        const currentUser = this.authService.getCurrentUser();
+        if (currentUser && user.id !== currentUser.id && !this.connectedUsers.some(u => u.id === user.id)) {
+          this.connectedUsers.push(user);
+        }
+      })
+    );
+    
+    // Déconnexion d'un utilisateur
+    this.subscriptions.push(
+      this.webSocketService.userDisconnected$.subscribe(user => {
+        this.connectedUsers = this.connectedUsers.filter(u => u.id !== user.id);
       })
     );
     
