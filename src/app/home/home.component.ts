@@ -53,7 +53,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   posts: Post[] = [];
   userName = '';
   newPostContent = '';
-  commentText: { [key: string]: string } = {}; // Changé en string pour les IDs MongoDB
+  commentText: { [key: string]: string } = {};
   connectedUsers: ConnectedUser[] = [];
   private apiUrl = 'https://pedago.univ-avignon.fr:3221';
   private subscriptions: Subscription[] = [];
@@ -82,6 +82,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   
     // Charger les posts
     this.loadPosts();
+    console.log('Posts chargés:', this.posts);
     
     // S'abonner aux événements WebSocket
     this.setupWebSocketListeners();
