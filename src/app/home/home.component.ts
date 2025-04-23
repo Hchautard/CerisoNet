@@ -82,7 +82,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   
     // Charger les posts
     this.loadPosts();
-    console.log('Posts chargés:', this.posts);
     
     // S'abonner aux événements WebSocket
     this.setupWebSocketListeners();

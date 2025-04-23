@@ -66,6 +66,7 @@
                   <div class="text-sm text-gray-500">{{ post.date | date:'dd/MM/yyyy HH:mm' }}</div>
                 </div>
                 <p class="text-gray-900 mb-3">{{ post.content }}</p>
+                <img *ngIf="post.image" [src]="post.image" alt="Post image" class="w-full h-auto rounded-md mb-3">
 
                 <!-- hashtags -->
                 <div *ngIf="post.hashtags && post.hashtags.length > 0" class="text-sm text-gray-500 mb-2">
