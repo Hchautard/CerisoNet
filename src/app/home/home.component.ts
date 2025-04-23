@@ -28,6 +28,7 @@ interface Post {
 interface Comment {
   id: string;
   commentedBy: number;
+  commentedByName?: string;
   text: string;  
   date: string;
   hour: string;
