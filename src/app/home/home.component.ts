@@ -17,7 +17,7 @@ interface Post {
   comments: Comment[];     
   date: string;         // date + heure formatée
   hashtags?: string[];  // hashtags
-  image?: {             
+  images?: {             
     url: string;
     title: string;
   };
@@ -188,7 +188,7 @@ export class HomeComponent implements OnInit, OnDestroy {
                   author: post.author || 'Inconnu',
                   likes: post.likes || 0,
                   likedBy: post.likedBy || [],
-                  image: post.image || null,
+                  images: post.images || null,
                   comments: post.comments || [],
                   date: post.date || new Date().toISOString(),
                   hashtags: post.hashtags || [],
