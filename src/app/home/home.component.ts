@@ -17,7 +17,7 @@ interface Post {
   comments: Comment[];     
   date: string;         // date + heure formatée
   hashtags?: string[];  // hashtags
-  image?: {             // Image associée au post
+  image?: {             
     url: string;
     title: string;
   };
@@ -27,11 +27,10 @@ interface Post {
 
 interface Comment {
   id: string;
-  postId: string;
-  userId: number;
-  userName: string;
-  content: string;  
+  commentedBy: number;
+  text: string;  
   date: string;
+  hour: string;
 }
 
 interface ConnectedUser {
