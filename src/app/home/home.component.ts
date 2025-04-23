@@ -14,7 +14,7 @@ interface Post {
   author: string;       // Nom de l'auteur (à partir de createdBy)
   authorId?: number;    // createdBy (id de l'auteur)
   likes: number;        // likes
-  comments: number;     // Nombre de commentaires
+  comments: Comment[];     
   date: string;         // date + heure formatée
   hashtags?: string[];  // hashtags
   image?: {             // Image associée au post
@@ -22,7 +22,6 @@ interface Post {
     title: string;
   };
   shared?: string;      // ID du post partagé
-  commentsList?: Comment[];
   showComments?: boolean;
 }
 
@@ -31,7 +30,7 @@ interface Comment {
   postId: string;
   userId: number;
   userName: string;
-  content: string;  // text dans MongoDB
+  content: string;  
   date: string;
 }
 
@@ -162,11 +161,11 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.webSocketService.newComment$.subscribe(comment => {
         const post = this.posts.find(p => p.id === comment.postId);
         if (post) {
-          if (!post.commentsList) {
-            post.commentsList = [];
+          if (!post.comments) {
+            post.comments = [];
           }
-          post.commentsList.push(comment);
-          post.comments += 1;
+          post.comments.push(comment);
+          post.showComments = true;
         }
       })
     );
@@ -188,10 +187,11 @@ export class HomeComponent implements OnInit, OnDestroy {
                   content: post.content || '',
                   author: post.author || 'Inconnu',
                   likes: post.likes || 0,
-                  comments: post.comments || 0,
+                  likedBy: post.likedBy || [],
+                  image: post.image || null,
+                  comments: post.comments || [],
                   date: post.date || new Date().toISOString(),
                   hashtags: post.hashtags || [],
-                  commentsList: [],
                   showComments: false
                 };
               });
@@ -267,7 +267,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     post.showComments = !post.showComments;
     
     // Si on affiche les commentaires et qu'ils n'ont pas été chargés, on les charge
-    if (post.showComments && (!post.commentsList || post.commentsList.length === 0) && post.comments > 0) {
+    if (post.showComments && !post.comments) {
       this.loadCommentsForPost(post);
     }
   }
@@ -277,7 +277,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response) => {
           if (response.success) {
-            post.commentsList = response.comments;
+            post.comments = response.comments || [];
           } else {
             this.notificationService.error('Erreur lors du chargement des commentaires');
           }

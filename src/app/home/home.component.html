@@ -66,7 +66,7 @@
                   <div class="text-sm text-gray-500">{{ post.date | date:'dd/MM/yyyy HH:mm' }}</div>
                 </div>
                 <p class="text-gray-900 mb-3">{{ post.content }}</p>
-                <img *ngIf="post.image" [src]="post.image" alt="Post image" class="w-full h-auto rounded-md mb-3">
+                <img *ngIf="post.image != null" [src]="post.image.url" [alt]="post.image.title" class="w-full h-auto rounded-md mb-3">
 
                 <!-- hashtags -->
                 <div *ngIf="post.hashtags && post.hashtags.length > 0" class="text-sm text-gray-500 mb-2">
@@ -84,7 +84,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                     </svg>
-                    <span>{{ post.comments }} commentaires</span>
+                    <span>{{ post.comments.length }} commentaires</span>
                   </button>
                   <button (click)="sharePost(post)" class="flex items-center space-x-1 hover:text-indigo-600">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -100,8 +100,8 @@
                     <h3 class="text-sm font-semibold mb-2">Commentaires</h3>
                     
                     <!-- Liste des commentaires -->
-                    <div *ngIf="post.commentsList && post.commentsList.length > 0" class="space-y-3 mb-3">
-                      <div *ngFor="let comment of post.commentsList" class="bg-gray-50 p-3 rounded-md">
+                    <div *ngIf="post.comments && post.comments.length > 0" class="space-y-3 mb-3">
+                      <div *ngFor="let comment of post.comments" class="bg-gray-50 p-3 rounded-md">
                         <div class="flex justify-between items-start">
                           <div class="text-xs font-medium text-indigo-600">{{ comment.userName }}</div>
                           <div class="text-xs text-gray-500">{{ comment.date | date:'dd/MM/yyyy HH:mm' }}</div>
