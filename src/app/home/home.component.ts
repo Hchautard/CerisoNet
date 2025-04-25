@@ -7,6 +7,7 @@ import { NotificationComponent } from '../notification/notification.component';
 import { HttpClient } from '@angular/common/http';
 import { WebSocketService } from '../services/websocket.service';
 import { Subscription } from 'rxjs';
+import { Router } from '@angular/router';
 
 interface Post {
   id: string;           // MongoDB _id (converti en string)
@@ -61,7 +62,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     private authService: AuthService, 
     private notificationService: NotificationService,
     private http: HttpClient,
-    private webSocketService: WebSocketService
+    private webSocketService: WebSocketService,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -92,6 +94,15 @@ export class HomeComponent implements OnInit, OnDestroy {
     
     // Déconnecter le WebSocket
     this.webSocketService.disconnect();
+  }
+
+  // Fonction pour aller sur l'api de Mme Nabitz
+  goToJavaApi() {
+    this.router.navigate(['/java_api']);
+  }
+
+  goToDocumentation() {
+    window.open('https://pedago.univ-avignon.fr:3221/api-docs', '_blank');
   }
 
   loadConnectedUsers() {

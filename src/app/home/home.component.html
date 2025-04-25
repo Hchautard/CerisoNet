@@ -3,8 +3,20 @@
     <header class="bg-white shadow">
       <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
         <h1 class="text-3xl font-bold text-gray-900">CERISoNet</h1>
-        <div class="flex items-center space-x-4">
+        <div class="flex items-center space-x-4 justify-between">
           <span class="text-gray-700">Bonjour, {{ userName }}</span>
+          <button 
+            (click)="goToJavaApi()" 
+            class="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-400 focus:outline-none"
+          >
+            Aller à l'API Java
+          </button>
+          <button 
+            (click)="goToDocumentation()" 
+            class="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-400 focus:outline-none"
+          >
+            Aller sur la documentation
+          </button>
           <button 
             (click)="logout()" 
             class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-500 focus:outline-none"
