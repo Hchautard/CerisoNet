@@ -1,1 +1,73 @@
-<p>java-api works!</p>
+<div class="message-container">
+    <h2>Messages</h2>
+    
+    <!-- Formulaire d'ajout de message -->
+    <div class="message-form">
+      <h3>Publier un message</h3>
+      <textarea [(ngModel)]="newMessage.body" placeholder="Écrivez votre message..."></textarea>
+      <input [(ngModel)]="newMessage.hashtags" placeholder="Hashtags (séparés par des espaces)">
+      <button (click)="postMessage()">Publier</button>
+    </div>
+  
+    <!-- Liste des messages -->
+    <div class="message-list">
+      <div *ngIf="loading" class="loading">Chargement des messages...</div>
+      <div *ngIf="error" class="error">{{ error }}</div>
+      
+      <div *ngFor="let message of messages" class="message-card">
+        <div class="message-header">
+          <span class="author">{{ message.createdBy }}</span>
+          <span class="date">{{ formatDateTime(message.date, message.hour) }}</span>
+        </div>
+        <div class="message-content">
+          {{ message.body }}
+        </div>
+        <div class="message-tags" *ngIf="message.hashtags && message.hashtags.length > 0">
+          <span *ngFor="let tag of message.hashtags" class="hashtag" (click)="searchByHashtag(tag)">#{{ tag }}</span>
+        </div>
+        <div class="message-actions">
+          <button (click)="likeMessage(message)" [class.liked]="isLikedByCurrentUser(message)">
+            {{ isLikedByCurrentUser(message) ? 'Je n\'aime plus' : 'J\'aime' }} ({{ message.likes || 0 }})
+          </button>
+          <button (click)="message.showCommentForm = !message.showCommentForm">
+            Commenter ({{ message.comments?.length || 0 }})
+          </button>
+        </div>
+        
+        <!-- Formulaire d'ajout de commentaire -->
+        <div class="comment-form" *ngIf="message.showCommentForm">
+          <textarea [(ngModel)]="message.newComment" placeholder="Écrivez un commentaire..."></textarea>
+          <button (click)="addComment(message)">Commenter</button>
+        </div>
+        
+        <!-- Liste des commentaires -->
+        <div class="comments" *ngIf="message.comments && message.comments.length > 0">
+          <div *ngFor="let comment of message.comments" class="comment">
+            <div class="comment-header">
+              <span class="author">{{ comment.commentedBy }}</span>
+              <span class="date">{{ formatDateTime(comment.date, comment.hour) }}</span>
+            </div>
+            <div class="comment-content">{{ comment.text }}</div>
+          </div>
+        </div>
+      </div>
+      
+      <div *ngIf="messages.length === 0 && !loading" class="no-messages">
+        Aucun message à afficher
+      </div>
+    </div>
+  
+    <!-- Recherche -->
+    <div class="search-section">
+      <h3>Rechercher des messages</h3>
+      <div class="search-form">
+        <input [(ngModel)]="searchTerm" placeholder="Rechercher...">
+        <button (click)="searchMessages()">Rechercher</button>
+      </div>
+      
+      <div class="hashtag-search">
+        <input [(ngModel)]="hashtagSearch" placeholder="Hashtag (sans #)">
+        <button (click)="searchByHashtag(hashtagSearch)">Rechercher par hashtag</button>
+      </div>
+    </div>
+  </div>
