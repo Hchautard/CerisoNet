@@ -120,6 +120,20 @@ export class WebSocketService {
       this.notificationService.info(`${data.userName} a partagé une publication`);
     });
     
+    // Ajout pour gérer la confirmation de partage
+    this.socket.on('share-success', (data: any) => {
+      if (data.success) {
+        this.notificationService.success(data.message || 'Publication partagée avec succès');
+      } else {
+        this.notificationService.error(data.message || 'Erreur lors du partage de la publication');
+      }
+    });
+    
+    // Gestion des erreurs
+    this.socket.on('error', (error: any) => {
+      console.error('Erreur WebSocket:', error);
+      this.notificationService.error(error.message || 'Une erreur est survenue');
+    });
   }
 
   getConnectedUsers() {

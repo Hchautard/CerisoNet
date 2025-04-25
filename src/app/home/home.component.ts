@@ -22,7 +22,7 @@ interface Post {
     url: string;
     title: string;
   };
-  shared?: string;      // ID du post partagé
+  shared?: number;      
   showComments?: boolean;
 }
 
@@ -180,6 +180,15 @@ export class HomeComponent implements OnInit, OnDestroy {
         }
       })
     );
+    
+    // Réception d'un post partagé 
+    this.subscriptions.push(
+      this.webSocketService.postShared$.subscribe(data => {
+        // La notification est déjà gérée par le service WebSocket
+        // Recharger les posts pour voir le nouveau post partagé
+        this.loadPosts();
+      })
+    );
   }
 
   loadPosts() {
@@ -192,17 +201,24 @@ export class HomeComponent implements OnInit, OnDestroy {
             // Vérifier que les données sont dans le bon format
             if (response.posts && Array.isArray(response.posts)) {
               this.posts = response.posts.map((post: any) => {
-                // S'assurer que tous les champs nécessaires sont présents
+                // S'assurer que tous les champs nécessaires sont présents et traiter les posts partagés
                 return {
                   id: post.id || '',
                   content: post.content || '',
                   author: post.author || 'Inconnu',
+                  authorId: post.authorId,
                   likes: post.likes || 0,
                   likedBy: post.likedBy || [],
                   images: post.images || null,
                   comments: post.comments || [],
                   date: post.date || new Date().toISOString(),
                   hashtags: post.hashtags || [],
+                  isShared: post.isShared || false,
+                  sharedFrom: post.sharedFrom ? {
+                    id: post.sharedFrom,
+                    name: post.sharedFromName || 'Utilisateur inconnu'
+                  } : undefined,
+                  originalPost: post.originalPost || '',
                   showComments: false
                 };
               });
