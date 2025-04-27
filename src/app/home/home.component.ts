@@ -14,6 +14,7 @@ interface Post {
   content: string;      // body du message
   author: string;       // Nom de l'auteur (à partir de createdBy)
   authorId?: number;    // createdBy (id de l'auteur)
+  authorAvatar: string;      // avatar de l'auteur
   likes: number;        // likes
   comments: Comment[];     
   date: string;         // date + heure formatée
@@ -251,6 +252,7 @@ export class HomeComponent implements OnInit, OnDestroy {
                   content: post.content || '',
                   author: post.author || 'Inconnu',
                   authorId: post.authorId,
+                  authorAvatar: post.authorAvatar || '',
                   likes: post.likes || 0,
                   likedBy: post.likedBy || [],
                   images: post.images || null,
@@ -366,44 +368,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   createPost() {
-    if (!this.newPostContent.trim()) return;
-    
-    const user = this.authService.getCurrentUser();
-    if (!user) return;
-    
-    // Extraction des hashtags du contenu
-    const hashtags: string[] = [];
-    const hashtagRegex = /#(\w+)/g;
-    let match;
-    const content = this.newPostContent.trim();
-    while ((match = hashtagRegex.exec(content)) !== null) {
-      hashtags.push(match[1]);
-    }
-    
-    const newPost = {
-      content: content,
-      hashtags: hashtags
-    };
-    
-    this.http.post<any>(`${this.apiUrl}/posts`, newPost, { withCredentials: true })
-      .subscribe({
-        next: (response) => {
-          if (response.success) {
-            this.notificationService.success('Publication créée avec succès');
-            this.newPostContent = '';
-            // Recharger les posts pour inclure le nouveau
-            this.loadPosts();
-          } else {
-            this.notificationService.error('Erreur lors de la création de la publication');
-          }
-        },
-        error: (error) => {
-          console.error('Erreur lors de la création du post:', error);
-          this.notificationService.error(
-            error.error?.message || 'Erreur de connexion au serveur'
-          );
-        }
-      });
+    this.notificationService.showNotification('Bientôt là...', 'info', 2000);
   }
 
   likePost(post: Post) {

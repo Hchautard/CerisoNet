@@ -230,6 +230,7 @@
           <div *ngIf="!loading && posts.length > 0">
             <div *ngFor="let post of posts" class="p-4 border-b border-gray-200">
               <div class="flex justify-between items-start mb-2">
+                <img *ngIf="post.authorAvatar" [src]="post.authorAvatar" alt="User Image" class="h-10 w-10 rounded-full">
                 <div class="text-sm font-medium text-indigo-600">{{ post.author }}</div>
                 <div class="text-sm text-gray-500">{{ post.date | date:'dd/MM/yyyy HH:mm' }}</div>
               </div>
@@ -412,6 +413,7 @@
             <div *ngFor="let user of connectedUsers" class="p-4">
               <div class="flex items-center space-x-3">
                 <div class="h-2 w-2 rounded-full bg-green-500"></div>
+                <img *ngIf="user.avatar" [src]="user.avatar" alt="User Image" class="h-10 w-10 rounded-full">
                 <div class="text-sm font-medium">{{ user.prenom }} {{ user.nom }}</div>
               </div>
             </div>
