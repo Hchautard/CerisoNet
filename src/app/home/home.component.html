@@ -277,9 +277,12 @@
                   <div *ngIf="post.comments && post.comments.length > 0" class="space-y-3 mb-3">
                     <div *ngFor="let comment of post.comments" class="bg-gray-50 p-3 rounded-md">
                       <div class="flex justify-between items-start">
-                        <div class="text-xs font-medium text-indigo-600">{{ comment.commentedByName || 'Utilisateur inconnu' }}</div>
-                        <div class="text-xs text-gray-500">{{ comment.date | date:'dd/MM/yyyy' }}</div>
-                        <div class="text-xs text-gray-500">{{ comment.hour | date:'HH:mm' }}</div>
+                        <div class="flex items -center space-x-2">
+                          <img *ngIf="comment.commentedByAvatar" [src]="comment.commentedByAvatar" alt="User Image" class="h-8 w-8 rounded-full">
+                          <div class="text-xs font-medium text-indigo-600">{{ comment.commentedByName || 'Utilisateur inconnu' }}</div>
+                          <div class="text-xs text-gray-500">{{ comment.date | date:'dd/MM/yyyy' }}</div>
+                          <div class="text-xs text-gray-500">{{ comment.hour | date:'HH:mm' }}</div>
+                        </div>
                       </div>
                       <p class="text-sm text-gray-800 mt-1">{{ comment.text }}</p>
                     </div>

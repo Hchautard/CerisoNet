@@ -30,6 +30,7 @@ interface Comment {
   id: string;
   commentedBy: number;
   commentedByName?: string;
+  commentedByAvatar?: string;
   text: string;  
   date: string;
   hour: string;
@@ -39,6 +40,7 @@ interface ConnectedUser {
   id: number;
   nom: string;
   prenom: string;
+  avatar: string;
 }
 
 @Component({
