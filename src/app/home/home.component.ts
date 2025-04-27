@@ -22,7 +22,7 @@ interface Post {
     url: string;
     title: string;
   };
-  shared?: number;      
+  shared?: string; // id du post partagé (si applicable)
   showComments?: boolean;
 }
 
