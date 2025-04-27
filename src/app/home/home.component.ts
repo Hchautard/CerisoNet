@@ -58,6 +58,16 @@ export class HomeComponent implements OnInit, OnDestroy {
   private apiUrl = 'https://pedago.univ-avignon.fr:3221';
   private subscriptions: Subscription[] = [];
 
+  // Propriétés pour la pagination
+  currentPage = 1;
+  pageSize = 5;
+  totalPosts = 0;
+  totalPages = 1;
+  pageSizeOptions = [5, 10, 20, 50];
+
+  // Propriétés pour le filtrage par hashtag (option)
+  filterByHashtag: string | null = null;
+
   constructor(
     private authService: AuthService, 
     private notificationService: NotificationService,
@@ -191,13 +201,29 @@ export class HomeComponent implements OnInit, OnDestroy {
     );
   }
 
+  /**
+   * Méthode pour charger les posts avec pagination
+   */
   loadPosts() {
     this.loading = true;
-    this.http.get<any>(`${this.apiUrl}/posts`, { withCredentials: true })
+    const params = {
+      page: this.currentPage.toString(),
+      pageSize: this.pageSize.toString(),
+      hashtag: this.filterByHashtag || ''
+    };
+    
+    this.http.get<any>(`${this.apiUrl}/posts`, { 
+      params,
+      withCredentials: true 
+    })
       .subscribe({
         next: (response) => {
           this.loading = false;
           if (response.success) {
+            // Mise à jour des infos de pagination
+            this.totalPosts = response.total || 0;
+            this.totalPages = Math.ceil(this.totalPosts / this.pageSize);
+            
             // Vérifier que les données sont dans le bon format
             if (response.posts && Array.isArray(response.posts)) {
               this.posts = response.posts.map((post: any) => {
@@ -239,6 +265,52 @@ export class HomeComponent implements OnInit, OnDestroy {
           );
         }
       });
+  }
+
+  /**
+   * Méthodes pour la pagination
+   */
+  goToPage(page: number) {
+    if (page >= 1 && page <= this.totalPages && page !== this.currentPage) {
+      this.currentPage = page;
+      this.loadPosts();
+    }
+  }
+
+  goToNextPage() {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.loadPosts();
+    }
+  }
+
+  goToPreviousPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.loadPosts();
+    }
+  }
+
+  changePageSize(event: Event) {
+    const select = event.target as HTMLSelectElement;
+    this.pageSize = parseInt(select.value, 10);
+    this.currentPage = 1; // Retour à la première page
+    this.loadPosts();
+  }
+
+  /**
+   * Méthode pour filtrer par hashtag
+   */
+  applyHashtagFilter(hashtag: string) {
+    this.filterByHashtag = hashtag;
+    this.currentPage = 1; // Retour à la première page
+    this.loadPosts();
+  }
+
+  clearHashtagFilter() {
+    this.filterByHashtag = null;
+    this.currentPage = 1; // Retour à la première page
+    this.loadPosts();
   }
 
   createPost() {

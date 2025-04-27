@@ -254,4 +254,8 @@ export class JavaApiComponent implements OnInit {
       return `${date} ${hour || ''}`;
     }
   }
+
+  goBack(): void {
+    window.history.back();
+  }
 }
