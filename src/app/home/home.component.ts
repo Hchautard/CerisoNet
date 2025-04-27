@@ -65,8 +65,13 @@ export class HomeComponent implements OnInit, OnDestroy {
   totalPages = 1;
   pageSizeOptions = [5, 10, 20, 50];
 
-  // Propriétés pour le filtrage par hashtag (option)
+  // Propriétés pour le filtrage
   filterByHashtag: string | null = null;
+  filterByOwner: 'all' | 'me' | 'others' = 'all';
+
+  // Propriétés pour le tri
+  sortBy: 'date' | 'owner' | 'popularity' = 'date';
+  sortDirection: 'asc' | 'desc' = 'desc';
 
   constructor(
     private authService: AuthService, 
@@ -202,15 +207,26 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Méthode pour charger les posts avec pagination
+   * Méthode pour charger les posts avec pagination, tri et filtrage
    */
   loadPosts() {
     this.loading = true;
-    const params = {
+    const params: any = {
       page: this.currentPage.toString(),
       pageSize: this.pageSize.toString(),
-      hashtag: this.filterByHashtag || ''
+      hashtag: this.filterByHashtag || '',
+      sortBy: this.sortBy,
+      sortDirection: this.sortDirection,
+      filterByOwner: this.filterByOwner
     };
+    
+    // Ajouter l'ID de l'utilisateur connecté si on filtre par propriétaire
+    if (this.filterByOwner !== 'all') {
+      const currentUser = this.authService.getCurrentUser();
+      if (currentUser) {
+        params.userId = currentUser.id.toString();
+      }
+    }
     
     this.http.get<any>(`${this.apiUrl}/posts`, { 
       params,
@@ -299,8 +315,9 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Méthode pour filtrer par hashtag
+   * Méthodes de filtrage
    */
+  // Filtrage par hashtag
   applyHashtagFilter(hashtag: string) {
     this.filterByHashtag = hashtag;
     this.currentPage = 1; // Retour à la première page
@@ -311,6 +328,39 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.filterByHashtag = null;
     this.currentPage = 1; // Retour à la première page
     this.loadPosts();
+  }
+
+  // Filtrage par propriétaire
+  filterByPostOwner(ownerType: 'all' | 'me' | 'others') {
+    this.filterByOwner = ownerType;
+    this.currentPage = 1; // Retour à la première page
+    this.loadPosts();
+  }
+
+  /**
+   * Méthodes de tri
+   */
+  applySorting(sortOption: 'date' | 'owner' | 'popularity') {
+    if (this.sortBy === sortOption) {
+      // Si on clique sur le même critère de tri, on inverse la direction
+      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      // Sinon on change le critère de tri et on met la direction par défaut
+      this.sortBy = sortOption;
+      // Date: par défaut du plus récent au plus ancien
+      // Owner: par défaut ordre alphabétique (A-Z)
+      // Popularité: par défaut du plus populaire au moins populaire
+      this.sortDirection = sortOption === 'owner' ? 'asc' : 'desc';
+    }
+    this.loadPosts();
+  }
+
+  // Méthode pour obtenir l'icône de tri en fonction du statut actuel
+  getSortIcon(column: string): string {
+    if (this.sortBy !== column) {
+      return 'sort'; // Icône neutre
+    }
+    return this.sortDirection === 'asc' ? 'arrow-up' : 'arrow-down';
   }
 
   createPost() {

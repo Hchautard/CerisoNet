@@ -59,17 +59,123 @@
           <div class="p-4 border-b border-gray-200">
             <h2 class="text-lg font-semibold text-gray-900">Mur d'accueil</h2>
             
-            <!-- Options de filtre pour les hashtags, si activé -->
-            <div *ngIf="filterByHashtag" class="mt-2 flex items-center">
-              <span class="bg-indigo-100 text-indigo-800 px-2 py-1 rounded-full mr-2 text-sm">
-                #{{filterByHashtag}}
-              </span>
-              <button 
-                (click)="clearHashtagFilter()" 
-                class="text-sm text-gray-600 hover:text-indigo-600"
-              >
-                Effacer le filtre
-              </button>
+            <!-- Options de filtrage -->
+            <div class="mt-3 flex flex-wrap items-center gap-3">
+              <!-- Filtres actifs -->
+              <div *ngIf="filterByHashtag || filterByOwner !== 'all'" class="flex flex-wrap items-center gap-2">
+                <span class="text-sm text-gray-700">Filtres actifs:</span>
+                
+                <!-- Filtre hashtag -->
+                <div *ngIf="filterByHashtag" class="flex items-center">
+                  <span class="bg-indigo-100 text-indigo-800 px-2 py-1 rounded-full text-sm">
+                    #{{filterByHashtag}}
+                  </span>
+                  <button 
+                    (click)="clearHashtagFilter()" 
+                    class="ml-1 text-gray-500 hover:text-gray-700"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+                
+                <!-- Filtre propriétaire -->
+                <div *ngIf="filterByOwner !== 'all'" class="flex items-center">
+                  <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm">
+                    {{ filterByOwner === 'me' ? 'Mes publications' : 'Publications des autres' }}
+                  </span>
+                  <button 
+                    (click)="filterByPostOwner('all')" 
+                    class="ml-1 text-gray-500 hover:text-gray-700"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Options de tri et filtrage -->
+            <div class="mt-3 flex flex-wrap justify-between items-center gap-2">
+              <!-- Tri -->
+              <div class="flex items-center text-sm text-gray-700">
+                <span class="mr-2">Trier par:</span>
+                <div class="flex space-x-2">
+                  <button 
+                    (click)="applySorting('date')" 
+                    class="px-2 py-1 rounded border text-sm hover:bg-gray-100"
+                    [class.border-indigo-500]="sortBy === 'date'"
+                    [class.text-indigo-700]="sortBy === 'date'"
+                  >
+                    Date
+                    <svg *ngIf="sortBy === 'date'" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path *ngIf="sortDirection === 'asc'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+                      <path *ngIf="sortDirection === 'desc'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  
+                  <button 
+                    (click)="applySorting('owner')" 
+                    class="px-2 py-1 rounded border text-sm hover:bg-gray-100"
+                    [class.border-indigo-500]="sortBy === 'owner'"
+                    [class.text-indigo-700]="sortBy === 'owner'"
+                  >
+                    Auteur
+                    <svg *ngIf="sortBy === 'owner'" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path *ngIf="sortDirection === 'asc'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+                      <path *ngIf="sortDirection === 'desc'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  
+                  <button 
+                    (click)="applySorting('popularity')" 
+                    class="px-2 py-1 rounded border text-sm hover:bg-gray-100"
+                    [class.border-indigo-500]="sortBy === 'popularity'"
+                    [class.text-indigo-700]="sortBy === 'popularity'"
+                  >
+                    Popularité
+                    <svg *ngIf="sortBy === 'popularity'" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path *ngIf="sortDirection === 'asc'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+                      <path *ngIf="sortDirection === 'desc'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              
+              <!-- Filtrage par propriétaire -->
+              <div class="flex items-center text-sm text-gray-700">
+                <span class="mr-2">Afficher:</span>
+                <div class="flex space-x-2">
+                  <button 
+                    (click)="filterByPostOwner('all')" 
+                    class="px-2 py-1 rounded border text-sm hover:bg-gray-100"
+                    [class.border-indigo-500]="filterByOwner === 'all'"
+                    [class.text-indigo-700]="filterByOwner === 'all'"
+                  >
+                    Tous
+                  </button>
+                  
+                  <button 
+                    (click)="filterByPostOwner('me')" 
+                    class="px-2 py-1 rounded border text-sm hover:bg-gray-100"
+                    [class.border-indigo-500]="filterByOwner === 'me'"
+                    [class.text-indigo-700]="filterByOwner === 'me'"
+                  >
+                    Mes publications
+                  </button>
+                  
+                  <button 
+                    (click)="filterByPostOwner('others')" 
+                    class="px-2 py-1 rounded border text-sm hover:bg-gray-100"
+                    [class.border-indigo-500]="filterByOwner === 'others'"
+                    [class.text-indigo-700]="filterByOwner === 'others'"
+                  >
+                    Publications des autres
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
           
