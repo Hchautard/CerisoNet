@@ -178,9 +178,11 @@ export class HomeComponent implements OnInit, OnDestroy {
     // Réception d'un like sur un post
     this.subscriptions.push(
       this.webSocketService.postLiked$.subscribe(data => {
-        const post = this.posts.find(p => p.id === data.postId);
-        if (post) {
-          post.likes = data.totalLikes;
+        if (data.success) {
+          const post = this.posts.find(p => p.id === data.postId);
+          if (post) {
+            post.likes = data.totalLikes !== undefined ? data.totalLikes : post.likes + 1;
+          }
         }
       })
     );
@@ -372,11 +374,9 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   likePost(post: Post) {
-    // Optimistic UI update
-    post.likes += 1;
     
     // Envoi de l'événement via WebSocket
-    this.webSocketService.likePost(Number(post.id), post.likes);
+    this.webSocketService.likePost(Number(post.id));
   }
 
   toggleComments(post: Post) {

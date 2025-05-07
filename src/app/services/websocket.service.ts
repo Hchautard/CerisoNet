@@ -150,17 +150,15 @@ export class WebSocketService {
 
   /**
    * Envoie un like pour un post
-   * @param postId Identifiant du post (chaîne MongoDB ou nombre)
-   * @param newLikeCount Nouveau nombre de likes
+   * @param postId Identifiant du post 
+   * @param userId Identifiant de l'utilisateur 
    */
-  likePost(postId: string | number, newLikeCount: number) {
+  likePost(postId: string | number) {
     const user = this.authService.getCurrentUser();
     if (user) {
       this.socket.emit('like-post', {
         postId,
-        userId: user.id,
-        userName: `${user.prenom} ${user.nom}`,
-        newLikeCount
+        userId: user.id
       });
     }
   }
