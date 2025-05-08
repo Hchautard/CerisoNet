@@ -24,7 +24,8 @@ export class LoginComponent implements OnInit {
     private notificationService: NotificationService,
     private router: Router
   ) {
-    // Ajout de validateurs pour les champs du formulaire
+
+    // Validateurs
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(3)]]
@@ -35,7 +36,6 @@ export class LoginComponent implements OnInit {
     // Récupérer la dernière date de connexion stockée localement
     this.lastLogin = this.authService.getLastLogin();
 
-    // Vérifier si l'utilisateur est déjà connecté
     if (this.authService.isLoggedIn()) {
       this.router.navigate(['/home']);
     }
@@ -47,7 +47,7 @@ export class LoginComponent implements OnInit {
       const { email, password } = this.loginForm.value;
 
       try {
-        // Au lieu de subscribe, on utilise await avec la méthode login qui retourne une promesse
+        
         const response = await this.authService.login(email, password);
         this.loading = false;
         

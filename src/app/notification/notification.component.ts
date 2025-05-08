@@ -1,23 +1,17 @@
-// notification.component.ts
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { Notification, NotificationService } from '../services/notification.service';
+import { Component } from '@angular/core';
+import { NotificationService } from '../services/notification.service';
 import { CommonModule } from '@angular/common';
 
-// Composant de notification
-// Affiche une notification à l'utilisateur
-// Les notifications sont émises par le service de notification
-// Le composant écoute les notifications et les affiche à l'écran
 @Component({
   selector: 'app-notification',
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div *ngIf="notification" 
+    <div *ngIf="notificationService.currentNotification" 
          class="notification-container"
-         [ngClass]="notification.type">
+         [ngClass]="notificationService.currentNotification.type">
       <div class="notification-content">
-        <span class="message">{{ notification.message }}</span>
+        <span class="message">{{ notificationService.currentNotification.message }}</span>
         <button (click)="closeNotification()" class="close-btn">×</button>
       </div>
     </div>
@@ -74,23 +68,8 @@ import { CommonModule } from '@angular/common';
     }
   `]
 })
-export class NotificationComponent implements OnInit, OnDestroy {
-  notification: Notification | null = null;
-  private subscription: Subscription | null = null;
-
-  constructor(private notificationService: NotificationService) {}
-
-  ngOnInit(): void {
-    this.subscription = this.notificationService.notification.subscribe(
-      notification => this.notification = notification
-    );
-  }
-
-  ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
+export class NotificationComponent {
+  constructor(public notificationService: NotificationService) {}
 
   closeNotification(): void {
     this.notificationService.clearNotification();
