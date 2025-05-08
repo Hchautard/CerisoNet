@@ -225,7 +225,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       filterByOwner: this.filterByOwner
     };
     
-    // Ajouter l'ID de l'utilisateur connecté si on filtre par propriétaire
+    // Si filtre propriétaire est "me" alors id de l'utilisateur connecté
     if (this.filterByOwner !== 'all') {
       const currentUser = this.authService.getCurrentUser();
       if (currentUser) {
@@ -248,7 +248,7 @@ export class HomeComponent implements OnInit, OnDestroy {
             // Vérifier que les données sont dans le bon format
             if (response.posts && Array.isArray(response.posts)) {
               this.posts = response.posts.map((post: any) => {
-                // S'assurer que tous les champs nécessaires sont présents et traiter les posts partagés
+                
                 return {
                   id: post.id || '',
                   content: post.content || '',
@@ -355,7 +355,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.sortBy = sortOption;
       // Date: par défaut du plus récent au plus ancien
       // Owner: par défaut ordre alphabétique (A-Z)
-      // Popularité: par défaut du plus populaire au moins populaire
+      // Popularité: par défaut du plus de like au moins de like
       this.sortDirection = sortOption === 'owner' ? 'asc' : 'desc';
     }
     this.loadPosts();
@@ -364,7 +364,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   // Méthode pour obtenir l'icône de tri en fonction du statut actuel
   getSortIcon(column: string): string {
     if (this.sortBy !== column) {
-      return 'sort'; // Icône neutre
+      return 'sort'; 
     }
     return this.sortDirection === 'asc' ? 'arrow-up' : 'arrow-down';
   }

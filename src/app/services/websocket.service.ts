@@ -11,7 +11,7 @@ export class WebSocketService {
   private socket: Socket;
   private connectedUsers: any[] = [];
   
-  // Observables exposés aux composants
+  // LEs observables pour les événements WebSocket
   connectedUsers$: Observable<any[]>;
   newPost$: Observable<any>;
   postLiked$: Observable<any>;
@@ -105,17 +105,16 @@ export class WebSocketService {
   }
 
   /**
-   * Configure les écouteurs d'événements WebSocket additionnels
+   * Configure les écouteurs d'événements WebSocket
    */
   private setupSocketListeners() {    
-    // Gestion de la confirmation de partage
-    this.socket.on('share-success', (data: any) => {
-      if (data.success) {
-        this.notificationService.success(data.message || 'Publication partagée avec succès');
-      } else {
-        this.notificationService.error(data.message || 'Erreur lors du partage de la publication');
-      }
-    });
+    // this.socket.on('share-success', (data: any) => {
+    //   if (data.success) {
+    //     this.notificationService.success(data.message || 'Publication partagée avec succès');
+    //   } else {
+    //     this.notificationService.error(data.message || 'Erreur lors du partage de la publication');
+    //   }
+    // });
     
     // Gestion des erreurs
     this.socket.on('error', (error: any) => {
