@@ -34,7 +34,7 @@ interface Comment {
 })
 export class JavaApiComponent implements OnInit {
   // URL de l'API
-  private apiUrl = 'https://pedago.univ-avignon.fr:3569/api/messages';
+  private apiUrl = 'http://pedago.univ-avignon.fr:3569/api/messages';
   
   // Données utilisateur (à remplacer par la gestion d'authentification réelle)
   currentUserId = 1;
@@ -71,6 +71,7 @@ export class JavaApiComponent implements OnInit {
         next: (data) => {
           this.messages = data;
           this.loading = false;
+          console.log('Messages chargés avec succès', this.messages);
         },
         error: (err) => {
           console.error('Erreur lors du chargement des messages', err);
@@ -115,52 +116,6 @@ export class JavaApiComponent implements OnInit {
           this.loading = false;
         }
       });
-  }
-
-  // Aimer un message
-  likeMessage(message: Message): void {
-    if (!message._id) return;
-    
-    const isLiked = this.isLikedByCurrentUser(message);
-    const endpoint = `${this.apiUrl}/${message._id}/like?userId=${this.currentUserId}`;
-    
-    if (isLiked) {
-      // Retirer le like
-      this.http.delete(endpoint)
-        .subscribe({
-          next: () => {
-            if (message.likes && message.likes > 0) message.likes--;
-            if (message.likedBy) {
-              const index = message.likedBy.indexOf(this.currentUserId);
-              if (index > -1) message.likedBy.splice(index, 1);
-            }
-          },
-          error: (err) => {
-            console.error('Erreur lors du retrait du like', err);
-            this.error = 'Impossible de retirer le like. Veuillez réessayer.';
-          }
-        });
-    } else {
-      // Ajouter le like
-      this.http.post(endpoint, {})
-        .subscribe({
-          next: () => {
-            if (!message.likes) message.likes = 0;
-            message.likes++;
-            if (!message.likedBy) message.likedBy = [];
-            message.likedBy.push(this.currentUserId);
-          },
-          error: (err) => {
-            console.error('Erreur lors de l\'ajout du like', err);
-            this.error = 'Impossible d\'ajouter le like. Veuillez réessayer.';
-          }
-        });
-    }
-  }
-
-  // Vérifier si l'utilisateur actuel a aimé un message
-  isLikedByCurrentUser(message: Message): boolean {
-    return message.likedBy ? message.likedBy.includes(this.currentUserId) : false;
   }
 
   // Ajouter un commentaire

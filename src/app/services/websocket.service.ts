@@ -80,23 +80,15 @@ export class WebSocketService {
       // Emit le nouvel utilisateur
       this.userConnectedSubject.next(user);
       
-      // Mettre à jour la liste des utilisateurs connectés (supposant que vous recevrez une liste complète)
+      // Mettre à jour la liste des utilisateurs connectés
       this.socket.emit('get-connected-users');
-      
-      // Notification visuelle
-      this.notificationService.info(`${user.prenom} ${user.nom} s'est connecté(e)`);
     });
     
     // Notification de déconnexion d'un utilisateur
     this.socket.on('user-disconnected', (user: any) => {
-      // Emit l'utilisateur déconnecté
-      this.userDisconnectedSubject.next(user);
-      
-      // Mettre à jour la liste des utilisateurs connectés (supposant que vous recevrez une liste complète)
+
+      // Mettre à jour la liste des utilisateurs connectés
       this.socket.emit('get-connected-users');
-      
-      // Notification visuelle  
-      this.notificationService.info(`${user.prenom} ${user.nom} s'est déconnecté(e)`);
     });
     
     // Réception d'un nouveau post

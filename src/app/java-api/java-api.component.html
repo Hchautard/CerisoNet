@@ -31,9 +31,6 @@
           <span *ngFor="let tag of message.hashtags" class="hashtag" (click)="searchByHashtag(tag)">#{{ tag }}</span>
         </div>
         <div class="message-actions">
-          <button (click)="likeMessage(message)" [class.liked]="isLikedByCurrentUser(message)">
-            {{ isLikedByCurrentUser(message) ? 'Je n\'aime plus' : 'J\'aime' }} ({{ message.likes || 0 }})
-          </button>
           <button (click)="message.showCommentForm = !message.showCommentForm">
             Commenter ({{ message.comments?.length || 0 }})
           </button>
