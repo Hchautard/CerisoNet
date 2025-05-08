@@ -34,7 +34,7 @@ interface Comment {
 })
 export class JavaApiComponent implements OnInit {
   // URL de l'API
-  private apiUrl = 'http://pedago.univ-avignon.fr:3569/api/messages';
+  private apiUrl = 'https://pedago.univ-avignon.fr:3569/api/messages';
   
   // Données utilisateur (à remplacer par la gestion d'authentification réelle)
   currentUserId = 1;
