@@ -65,7 +65,7 @@ export class JavaApiComponent implements OnInit {
   loadMessages(): void {
     this.loading = true;
     this.error = null;
-
+    console.log('Chargement des messages JAVA...');
     let buff = this.http.get<any>(this.apiUrl);
     console.log(buff);
     

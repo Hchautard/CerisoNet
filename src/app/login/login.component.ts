@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { url } from 'inspector';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { NotificationService } from '../services/notification.service';
@@ -71,10 +70,6 @@ export class LoginComponent implements OnInit {
         }
       });
     } else {
-      Object.keys(this.loginForm.controls).forEach(key => {
-        const control = this.loginForm.get(key);
-        control?.markAsTouched();
-      });
       this.notificationService.error('Veuillez corriger les erreurs dans le formulaire');
     }
   }
