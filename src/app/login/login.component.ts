@@ -18,8 +18,6 @@ export class LoginComponent implements OnInit {
   lastLogin: string | null = null;
   loading = false;
 
-  // J'utilise 2 services pour gérer la connexion et les notifications
-  // J'utilise également le router pour rediriger l'utilisateur après la connexion
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
@@ -43,32 +41,30 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  login() {
+  async login() {
     if (this.loginForm.valid) {
       this.loading = true;
       const { email, password } = this.loginForm.value;
 
-      // Subscribe permet de gérer les réponses de la requête HTTP
-      // Ici, on affiche une notification en cas de succès ou d'erreur
-      this.authService.login(email, password).subscribe({
-        next: (response) => {
-          this.loading = false;
-          if (response.success) {
-            this.notificationService.success('Connexion réussie, date de la dernière connexion: ' + this.lastLogin);
-            setTimeout(() => {
-              this.router.navigate(['/home']);
-            } , 2000);
-          } else {
-            this.notificationService.error(response.message || 'Erreur lors de la connexion (HTTP ' + response.message + ')');
-          }
-        },
-        error: (error) => {
-          this.loading = false;
-          this.notificationService.error(
-            error.error?.message || 'Erreur de connexion au serveur (HTTP ' + error.status + ')'
-          );
+      try {
+        // Au lieu de subscribe, on utilise await avec la méthode login qui retourne une promesse
+        const response = await this.authService.login(email, password);
+        this.loading = false;
+        
+        if (response.success) {
+          this.notificationService.success('Connexion réussie, date de la dernière connexion: ' + this.lastLogin);
+          setTimeout(() => {
+            this.router.navigate(['/home']);
+          }, 2000);
+        } else {
+          this.notificationService.error(response.message || 'Erreur lors de la connexion (HTTP ' + response.message + ')');
         }
-      });
+      } catch (error: any) {
+        this.loading = false;
+        this.notificationService.error(
+          error.error?.message || 'Erreur de connexion au serveur (HTTP ' + error.status + ')'
+        );
+      }
     } else {
       this.notificationService.error('Veuillez corriger les erreurs dans le formulaire');
     }

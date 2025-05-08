@@ -425,14 +425,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   logout() {
-    this.authService.logout().subscribe({
-      next: () => {
-        this.notificationService.success('Déconnexion réussie');
-        // Redirection gérée par le service d'auth
-      },
-      error: () => {
-        this.notificationService.error('Erreur lors de la déconnexion');
-      }
-    });
+    this.authService.logout();
   }
 }
