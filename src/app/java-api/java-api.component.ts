@@ -65,13 +65,15 @@ export class JavaApiComponent implements OnInit {
   loadMessages(): void {
     this.loading = true;
     this.error = null;
+
+    let buff = this.http.get<any>(this.apiUrl);
+    console.log(buff);
     
-    this.http.get<any[]>(this.apiUrl)
+    this.http.get<any>(this.apiUrl, { withCredentials: true })
       .subscribe({
         next: (data) => {
           this.messages = data;
           this.loading = false;
-          console.log('Messages chargés avec succès', this.messages);
         },
         error: (err) => {
           console.error('Erreur lors du chargement des messages', err);
